@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140101000020) do
+ActiveRecord::Schema.define(version: 20140101000021) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "addresses", force: true do |t|
     t.integer  "customer_id",                null: false
@@ -58,6 +61,13 @@ ActiveRecord::Schema.define(version: 20140101000020) do
   end
 
   add_index "allowed_sources", ["namespace", "octet1", "octet2", "octet3", "octet4"], name: "index_allowed_sources_on_namespace_and_octets", unique: true, using: :btree
+
+  create_table "application_settings", force: true do |t|
+    t.string   "application_name",      default: "Baukis", null: false
+    t.integer  "expiration_of_session", default: 60,       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "customers", force: true do |t|
     t.string   "email",            null: false
@@ -139,7 +149,6 @@ ActiveRecord::Schema.define(version: 20140101000020) do
   add_index "messages", ["customer_id", "deleted", "status", "created_at"], name: "index_messages_on_c_d_s_c", using: :btree
   add_index "messages", ["customer_id", "discarded", "created_at"], name: "index_messages_on_customer_id_and_discarded_and_created_at", using: :btree
   add_index "messages", ["customer_id"], name: "index_messages_on_customer_id", using: :btree
-  add_index "messages", ["parent_id"], name: "messages_parent_id_fk", using: :btree
   add_index "messages", ["root_id", "deleted", "created_at"], name: "index_messages_on_root_id_and_deleted_and_created_at", using: :btree
   add_index "messages", ["staff_member_id"], name: "index_messages_on_staff_member_id", using: :btree
   add_index "messages", ["type", "customer_id"], name: "index_messages_on_type_and_customer_id", using: :btree

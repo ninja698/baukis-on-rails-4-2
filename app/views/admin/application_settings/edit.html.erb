@@ -1,0 +1,24 @@
+<% @title = 'アプリケーション設定' %>
+<h1><%= @title %></h1>
+
+<div id="generic-form">
+  <!--
+  <div class="notes">
+    <span class="mark">＊</span>印の付いた項目は入力必須です。
+  </div>
+  -->
+  <%= form_for @application_setting, url: :admin_application_setting do |f| %>
+    <div>
+      <%= f.label :application_name, 'アプリケーション名', class: 'required' %>
+      <%= f.text_field :application_name %>
+    </div>
+    <div>
+      <%= f.label :expiration_of_session, 'セッションタイムアウト(分)', class: 'required' %>
+      <%= f.number_field :expiration_of_session %>
+    </div>
+    <div class="buttons">
+      <%= f.submit '更新' %>
+      <%= link_to 'キャンセル', :admin_root %>
+    </div>
+  <% end %>
+</div>

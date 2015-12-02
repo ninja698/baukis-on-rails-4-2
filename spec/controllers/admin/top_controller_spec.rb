@@ -44,8 +44,12 @@ describe Admin::TopController, 'ログイン後' do
     end
 
     example 'セッションタイムアウト' do
-      session[:last_access_time] =
-        Staff::Base::TIMEOUT.ago.advance(seconds: -1)
+      if ApplicationSetting.exists?
+        TIMEOUT = ApplicationSetting.first.expiration_of_session.minutes
+      else
+        TIMEOUT = 60.minutes
+      end
+      session[:last_access_time] = TIMEOUT.ago.advance(seconds: -1)
       get :index
       expect(session[:administrator_id]).to be_nil
       expect(response).to redirect_to(admin_login_url)

@@ -3,9 +3,18 @@ module ApplicationHelper
 
   def document_title
     if @title.present?
-      "#{@title} - Baukis"
+      "#{@title} - #{acquire_title}"
     else
-      'Baukis'
+      acquire_title
     end
   end
+
+  def acquire_title
+    if ApplicationSetting.exists?
+      ApplicationSetting.first.application_name
+    else
+      "Baukis"
+    end
+  end
+
 end

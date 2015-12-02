@@ -2,6 +2,7 @@ class Staff::Base < ApplicationController
   before_action :check_source_ip_address
   before_action :authorize
   before_action :check_account
+  before_action :get_timeout
   before_action :check_timeout
 
   private
@@ -33,16 +34,24 @@ class Staff::Base < ApplicationController
     end
   end
 
-  TIMEOUT = 60.minutes
+  def get_timeout
+    if ApplicationSetting.exists?
+      @TIMEOUT = ApplicationSetting.first.expiration_of_session.minutes
+    else
+      @TIMEOUT = 60.minutes
+    end
+  end
 
   def check_timeout
     if current_staff_member
-      if session[:last_access_time] >= TIMEOUT.ago
-        session[:last_access_time] = Time.current
-      else
-        session.delete(:staff_member_id)
-        flash.alert = 'セッションがタイムアウトしました。'
-        redirect_to :staff_login
+      unless @TIMEOUT == 0
+        if session[:last_access_time] >= @TIMEOUT.ago
+          session[:last_access_time] = Time.current
+        else
+          session.delete(:staff_member_id)
+          flash.alert = 'セッションがタイムアウトしました。'
+          redirect_to :staff_login
+        end
       end
     end
   end
